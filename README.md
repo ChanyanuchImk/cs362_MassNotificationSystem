@@ -60,4 +60,18 @@
   "timestamp": "2025-12-11T14:30:00Z"
 }
 ```
+### Edit message
+- Endpoint : GET/PUT/DELETE /api/messages/{id}
+- Description : แก้ไขหรือลบข้อความที่ร่างไว้ก่อนจะส่งจริง
 
+#### Request Body (JSON)
+```json
+{
+  "messageId": "msg001",
+  "content": "ตรวจพบแรงสั่นสะเทือนขนาด 8.5 ให้อพยพขึ้นที่สูงด่วน",
+  "disasterType": "สึนามิ",
+  "createdTime": "2026-03-21T14:30:00Z"
+}
+```
+
+### 
