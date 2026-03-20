@@ -101,13 +101,13 @@ Repository Layer
 
 ### Task 2: Interface
 ### NotificationService (Channel Interface)
-```json
+```go
 type NotificationService interface {
     SendNotification(message EmergencyMessage, user User) error
 }
 ```
 ### EmergencyMessageService
-```json
+```go
 type EmergencyMessageService interface {
     CreateMessage(message EmergencyMessage) error
     GetMessageByID(messageID string) (EmergencyMessage, error)
@@ -116,23 +116,132 @@ type EmergencyMessageService interface {
 }
 ```
 ### NotificationService (Business Logic)
-```json
+```go
 type NotificationUsecase interface {
     SendNotification(messageID string) (Notification, error)
     GetNotification(notificationID string) (Notification, error)
 }
 ```
 ### DeliveryManagerService
-```json
+```go
 type DeliveryManager interface {
     DistributeMessage(message EmergencyMessage, users []User) error
     RetryFailedDelivery(notificationID string) error
 }
 ```
 ### NotificationLogService
-```json
+```go
 type NotificationLogService interface {
     GetLogs() ([]NotificationLog, error)
     StoreLog(log NotificationLog) error
+}
+```
+### Repository Interfaces
+### UserRepository
+```go
+type UserRepository interface {
+    GetAllUsers() ([]User, error)
+    GetUserByID(userID int) (User, error)
+}
+```
+### EmergencyMessageRepository
+```go
+type EmergencyMessageRepository interface {
+    Save(message EmergencyMessage) error
+    FindByID(messageID string) (EmergencyMessage, error)
+    Update(message EmergencyMessage) error
+    Delete(messageID string) error
+}
+```
+### EmergencyMessageRepository
+```go
+type NotificationRepository interface {
+    Save(notification Notification) error
+    FindByID(notificationID string) (Notification, error)
+}
+```
+### NotificationLogRepository
+```go
+type NotificationLogRepository interface {
+    Save(log NotificationLog) error
+    FindAll() ([]NotificationLog, error)
+}
+```
+### Task3: Refinement (Entity Logic)
+### EmergencyMessage Logic
+```go
+func (m *EmergencyMessage) IsValid() bool {
+    return m.Content != "" &&
+        m.DisasterType != "" &&
+        m.SeverityLevel != ""
+}
+```
+```go
+func (m *EmergencyMessage) IsHighSeverity() bool {
+    return m.SeverityLevel == "High"
+}
+```
+### Notification Logic
+```go
+func (n *Notification) MarkSent() {
+    n.Status = "SENT"
+    n.SentTime = time.Now()
+}
+```
+```go
+func (n *Notification) MarkFailed() {
+    n.Status = "FAILED"
+}
+```
+```go
+func (n *Notification) IsSent() bool {
+    return n.Status == "SENT"
+}
+```
+```go
+func (n *Notification) CanRetry() bool {
+    return n.Status == "FAILED"
+}
+```
+### NotificationLog Logic
+```go
+func (l *NotificationLog) IsSuccess() bool {
+    return l.Status == "SUCCESS"
+}
+```
+### User Logic
+```go
+func (u *User) HasValidContact() bool {
+    return u.Phone != "" || u.LineID != ""
+}
+```
+### DeliveryManager Logic
+```go
+func (d *DeliveryManagerService) DistributeMessage(message EmergencyMessage, users []User) error {
+    for _, user := range users {
+
+        if !user.HasValidContact() {
+            continue
+        }
+
+        for _, channel := range d.channels {
+            err := channel.SendNotification(message, user)
+            if err != nil {
+                // log failure
+            }
+        }
+    }
+    return nil
+}
+```
+### Retry Logic
+```go
+func (d *DeliveryManagerService) RetryFailedDelivery(notification Notification) error {
+    if !notification.CanRetry() {
+        return errors.New("cannot retry")
+    }
+
+    // retry logic
+    return nil
 }
 ```
