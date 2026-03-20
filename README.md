@@ -98,3 +98,41 @@ Repository Layer
 ```
 
 ### 
+
+### Task 2: Interface
+### NotificationService (Channel Interface)
+```json
+type NotificationService interface {
+    SendNotification(message EmergencyMessage, user User) error
+}
+```
+### EmergencyMessageService
+```json
+type EmergencyMessageService interface {
+    CreateMessage(message EmergencyMessage) error
+    GetMessageByID(messageID string) (EmergencyMessage, error)
+    UpdateMessage(messageID string, message EmergencyMessage) error
+    DeleteMessage(messageID string) error
+}
+```
+### NotificationService (Business Logic)
+```json
+type NotificationUsecase interface {
+    SendNotification(messageID string) (Notification, error)
+    GetNotification(notificationID string) (Notification, error)
+}
+```
+### DeliveryManagerService
+```json
+type DeliveryManager interface {
+    DistributeMessage(message EmergencyMessage, users []User) error
+    RetryFailedDelivery(notificationID string) error
+}
+```
+### NotificationLogService
+```json
+type NotificationLogService interface {
+    GetLogs() ([]NotificationLog, error)
+    StoreLog(log NotificationLog) error
+}
+```
