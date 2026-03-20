@@ -21,7 +21,7 @@
 
 ## Step 3 : Interface & Controller Contract
 ### Task 1: Controller (API Specification)
-#### Create & Send Notification
+### Create & Send Notification
 - Endpoint : POST /api/messages
 - Description : สร้างข้อความและเริ่มกระบวนการส่ง
 
@@ -32,6 +32,32 @@
   "content": "ตรวจพบแรงสั่นสะเทือนขนาด 8.5 ให้อพยพขึ้นที่สูงด่วน",
   "disasterType": "สึนามิ",
   "createdTime": "2026-03-21T14:30:00Z"
+}
+```
+
+### Notification
+- Endpoint : POST /api/notifications
+- Description : ใช้สำหรับสั่ง "ส่ง" และ "ติดตามสถานะ"
+
+#### Request Body (JSON)
+```json
+{
+  "notificationId": "noti0001",
+  "status": "sended",
+  "sentTime": "2025-04-11T14:30:00Z"
+}
+```
+
+### Notification Log
+- Endpoint : GET /api/logs
+- Description : ใช้สำหรับบันทึกประวัติ
+
+#### Request Body (JSON)
+```json
+{
+  "logId": "log001",
+  "status": "saved",
+  "timestamp": "2025-12-11T14:30:00Z"
 }
 ```
 
